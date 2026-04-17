@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CFA L1 Tracker</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2333;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text-dim: #8b949e;
+    --accent: #58a6ff;
+    --green: #3fb950;
+    --green-dim: rgba(63,185,80,0.15);
+    --yellow: #d29922;
+    --yellow-dim: rgba(210,153,34,0.15);
+    --red: #f85149;
+    --red-dim: rgba(248,81,73,0.15);
+    --orange: #db6d28;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    padding: 0;
+  }
+
+  /* ── Top bar ── */
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .topbar h1 {
+    font-size: 18px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .topbar h1 span.emoji { font-size: 22px; }
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+  .topbar-right .stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .topbar-right .stat-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+  }
+  .topbar-right .stat-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 24px 20px 80px;
+  }
+
+  /* ── Progress banner ── */
+  .progress-banner {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+  }
+  .progress-banner h2 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+  }
+  .progress-bar-outer {
+    width: 100%;
+    height: 28px;
+    background: var(--surface2);
+    border-radius: 14px;
+    overflow: hidden;
+    position: relative;
+  }
+  .progress-bar-inner {
+    height: 100%;
+    background: linear-gradient(90deg, var(--green), var(--accent));
+    border-radius: 14px;
+    transition: width 0.5s ease;
+    min-width: 2px;
+  }
+  .progress-bar-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  }
+  .progress-stats {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  /* ── Nav tabs ── */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0;
+    overflow-x: auto;
+  }
+  .tab {
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-dim);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ── Topic cards ── */
+  .topic-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .topic-card:hover { border-color: var(--accent); }
+  .topic-card.completed { border-color: var(--green); }
+
+  .topic-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .topic-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
+  }
+  .topic-number {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-dim);
+    background: var(--surface2);
+    padding: 3px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  .topic-name {
+    font-size: 15px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .topic-header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+  .topic-weight {
+    font-size: 12px;
+    color: var(--text-dim);
+    background: var(--surface2);
+    padding: 3px 8px;
+    border-radius: 4px;
+  }
+  .topic-progress-mini {
+    width: 80px;
+    height: 6px;
+    background: var(--surface2);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .topic-progress-mini-inner {
+    height: 100%;
+    background: var(--green);
+    border-radius: 3px;
+    transition: width 0.3s;
+  }
+  .topic-chevron {
+    color: var(--text-dim);
+    transition: transform 0.2s;
+    font-size: 14px;
+  }
+  .topic-card.open .topic-chevron { transform: rotate(90deg); }
+
+  .topic-modules {
+    display: none;
+    border-top: 1px solid var(--border);
+    padding: 4px 0;
+  }
+  .topic-card.open .topic-modules { display: block; }
+
+  /* ── Module rows ── */
+  .module-row {
+    display: flex;
+    align-items: center;
+    padding: 10px 18px 10px 18px;
+    gap: 12px;
+    transition: background 0.15s;
+  }
+  .module-row:hover { background: var(--surface2); }
+
+  .module-checkbox {
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--border);
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s;
+    background: transparent;
+  }
+  .module-checkbox:hover { border-color: var(--accent); }
+  .module-checkbox.checked {
+    background: var(--green);
+    border-color: var(--green);
+  }
+  .module-checkbox.checked::after {
+    content: '✓';
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .module-info { flex: 1; min-width: 0; }
+  .module-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .module-row.done .module-title {
+    color: var(--text-dim);
+    text-decoration: line-through;
+  }
+  .module-subtitle {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 1px;
+  }
+
+  .module-date {
+    font-size: 12px;
+    color: var(--text-dim);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .module-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .badge-current {
+    background: var(--yellow-dim);
+    color: var(--yellow);
+  }
+  .badge-done {
+    background: var(--green-dim);
+    color: var(--green);
+  }
+  .badge-upcoming {
+    background: var(--surface2);
+    color: var(--text-dim);
+  }
+
+  /* ── Weekly view ── */
+  .week-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .week-card.current-week {
+    border-color: var(--accent);
+    background: rgba(88,166,255,0.05);
+  }
+  .week-card.past-week { opacity: 0.5; }
+  .week-left { flex: 1; }
+  .week-label {
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .week-dates {
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+  .week-topic {
+    font-size: 13px;
+    color: var(--accent);
+    margin-top: 2px;
+  }
+  .week-hours {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .week-hours input {
+    width: 50px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    padding: 6px 8px;
+    font-size: 13px;
+    text-align: center;
+  }
+  .week-hours input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .week-hours label {
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+  .week-target {
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+
+  /* ── Review section ── */
+  .review-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    margin-bottom: 10px;
+  }
+  .review-card h3 {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .review-card .dates {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+  .review-card p {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+  .review-card .target-badge {
+    display: inline-block;
+    background: var(--surface2);
+    padding: 2px 10px;
+    border-radius: 10px;
+    font-size: 12px;
+    color: var(--accent);
+    margin-top: 8px;
+  }
+
+  /* ── Red flags ── */
+  .flag-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin-bottom: 8px;
+    border-left: 3px solid var(--red);
+  }
+  .flag-card h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--red);
+    margin-bottom: 4px;
+  }
+  .flag-card p {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  /* ── Stats grid ── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+  .stat-card .val {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .stat-card .lbl {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+
+  /* ── Priority tags ── */
+  .priority-high { color: var(--red); }
+  .priority-medium { color: var(--yellow); }
+  .priority-lower { color: var(--text-dim); }
+
+  /* ── Responsive ── */
+  @media (max-width: 640px) {
+    .topbar { padding: 12px 16px; flex-wrap: wrap; gap: 8px; }
+    .topbar-right { gap: 12px; }
+    .container { padding: 16px 12px 60px; }
+    .topic-header { padding: 12px 14px; }
+    .module-row { padding: 8px 14px; }
+    .topic-progress-mini { display: none; }
+    .week-card { flex-wrap: wrap; }
+  }
+
+  /* ── Reset button ── */
+  .reset-btn {
+    background: var(--red-dim);
+    color: var(--red);
+    border: 1px solid var(--red);
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 13px;
+    cursor: pointer;
+    margin-top: 24px;
+  }
+  .reset-btn:hover { background: var(--red); color: white; }
+
+  .section-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+    margin-top: 8px;
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1><span class="emoji">📊</span> CFA Level 1 Tracker</h1>
+  <div class="topbar-right">
+    <div class="stat">
+      <span class="stat-value" id="days-remaining">—</span>
+      <span class="stat-label">Days Left</span>
+    </div>
+    <div class="stat">
+      <span class="stat-value" id="modules-done">—</span>
+      <span class="stat-label">Modules Done</span>
+    </div>
+    <div class="stat">
+      <span class="stat-value" id="hours-logged">—</span>
+      <span class="stat-label">Hours Logged</span>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Progress banner -->
+  <div class="progress-banner">
+    <h2>Overall Progress</h2>
+    <div class="progress-bar-outer">
+      <div class="progress-bar-inner" id="overall-progress-bar"></div>
+      <div class="progress-bar-text" id="overall-progress-text">0%</div>
+    </div>
+    <div class="progress-stats">
+      <span id="progress-left">0 of 0 modules complete</span>
+      <span id="progress-right">Exam: Nov 11, 2026</span>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="val" id="stat-weeks">—</div>
+      <div class="lbl">Weeks Remaining</div>
+    </div>
+    <div class="stat-card">
+      <div class="val" id="stat-topics-done">—</div>
+      <div class="lbl">Topics Complete</div>
+    </div>
+    <div class="stat-card">
+      <div class="val" id="stat-current-topic">—</div>
+      <div class="lbl">Current Topic</div>
+    </div>
+    <div class="stat-card">
+      <div class="val" id="stat-hours-week">—</div>
+      <div class="lbl">Hours This Week</div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" data-tab="topics">Topics & Modules</button>
+    <button class="tab" data-tab="weekly">Weekly Tracker</button>
+    <button class="tab" data-tab="review">Review Plan</button>
+    <button class="tab" data-tab="flags">Red Flags</button>
+  </div>
+
+  <!-- TAB: Topics & Modules -->
+  <div class="tab-content active" id="tab-topics"></div>
+
+  <!-- TAB: Weekly -->
+  <div class="tab-content" id="tab-weekly"></div>
+
+  <!-- TAB: Review -->
+  <div class="tab-content" id="tab-review">
+    <p class="section-title">Review Period — Oct 11 to Nov 10</p>
+
+    <div class="review-card">
+      <h3>🔵 Week 1 — Ethics Deep Dive</h3>
+      <div class="dates">Oct 11 – 17</div>
+      <p>Re-read Ethics cover to cover (Schweser). Complete all Ethics EOCQs. Target 80%+. This is your insurance policy near the pass line.</p>
+      <span class="target-badge">Target: 20 hours</span>
+    </div>
+
+    <div class="review-card">
+      <h3>🔵 Week 2 — High-Weight Review</h3>
+      <div class="dates">Oct 18 – 24</div>
+      <p>FSA + Fixed Income deep review. Redo weak EOCQs. QBank: aim for 50 questions per day. Focus on the topics worth 11–14% each.</p>
+      <span class="target-badge">Target: 20 hours</span>
+    </div>
+
+    <div class="review-card">
+      <h3>🔵 Week 3 — Broad Review + Mock 1</h3>
+      <div class="dates">Oct 25 – 31</div>
+      <p>Review Equity + QM + Economics. Take full timed Mock Exam 1 (2 × 2hr 15min sessions). Review every single wrong answer thoroughly.</p>
+      <span class="target-badge">Target: 20 hours</span>
+    </div>
+
+    <div class="review-card">
+      <h3>🔵 Week 4 — Mock 2 + Targeted Fixes</h3>
+      <div class="dates">Nov 1 – 4</div>
+      <p>Full timed Mock Exam 2. Attack weak areas identified from mock results. Quick Ethics refresh pass.</p>
+      <span class="target-badge">Target: 15 hours</span>
+    </div>
+
+    <div class="review-card">
+      <h3>🟢 Final Days — Wind Down</h3>
+      <div class="dates">Nov 5 – 10</div>
+      <p>Formula sheet scan. Light Ethics re-read. Sleep well. No new material. Trust the work you've put in.</p>
+      <span class="target-badge">Target: 8 hours</span>
+    </div>
+  </div>
+
+  <!-- TAB: Red Flags -->
+  <div class="tab-content" id="tab-flags">
+    <p class="section-title">When Things Go Wrong — Rules to Follow</p>
+
+    <div class="flag-card">
+      <h4>🚩 3+ Days Behind Schedule</h4>
+      <p>Add 3–4 extra hours on the weekend. If still behind after 1 week: reduce EOCQ depth for the current topic and move on. Breadth beats depth.</p>
+    </div>
+
+    <div class="flag-card">
+      <h4>🚩 Below 30% on Topic EOCQs</h4>
+      <p>Flag the topic for the review period. Do NOT re-study it now. Keep moving forward. You'll come back to it in October with fresh eyes.</p>
+    </div>
+
+    <div class="flag-card">
+      <h4>🚩 Missed 2+ Study Days in a Row</h4>
+      <p>Take 1 full day completely off. Drop next week's target to 12 hours. Reassess your schedule. Burnout is a bigger risk than falling behind.</p>
+    </div>
+
+    <div class="flag-card">
+      <h4>🚩 Feeling Like Quitting</h4>
+      <p>Look at your hours logged on this tracker. You ARE doing the work. Scoring 30% on first-pass EOCQs is completely normal. Talk to someone about how you're feeling.</p>
+    </div>
+
+    <div class="flag-card">
+      <h4>🚩 Panicking Entering Review Period</h4>
+      <p>This is expected and normal. The 30-day review period exists precisely for this reason. Trust the process. Focus on Ethics + high-weight topics first.</p>
+    </div>
+
+    <div class="flag-card">
+      <h4>🚩 QM Sprint Feels Too Fast</h4>
+      <p>LM6 (Simulation Methods) and LM11 (Big Data Techniques) are lighter modules — you'll catch your breath there. Push through the harder ones.</p>
+    </div>
+  </div>
+
+  <button class="reset-btn" onclick="resetAll()">Reset All Progress</button>
+</div>
+
+<script>
+// ════════════════════════════════════════════════
+// DATA
+// ════════════════════════════════════════════════
+
+const EXAM_DATE = new Date('2026-11-11');
+
+const TOPICS = [
+  {
+    id: 'qm',
+    name: 'Quantitative Methods',
+    weight: '6–9%',
+    priority: 'medium',
+    start: 'Apr 17',
+    end: 'Apr 28',
+    modules: [
+      { id: 'qm_p1', name: 'Interest Rates, PV, FV', sub: 'Prerequisite 1', date: 'Done', done: true },
+      { id: 'qm_p2', name: 'Data Organization & Descriptive Stats', sub: 'Prerequisite 2', date: 'Done', done: true },
+      { id: 'qm_p3', name: 'Probability Concepts', sub: 'Prerequisite 3', date: 'Done', done: true },
+      { id: 'qm_p4', name: 'Probability Distributions', sub: 'Prerequisite 4', date: 'Done', done: true },
+      { id: 'qm_1', name: 'Rates and Returns', sub: 'LM1', date: 'Done', done: true },
+      { id: 'qm_2', name: 'Time Value of Money in Finance', sub: 'LM2', date: 'Done', done: true },
+      { id: 'qm_3', name: 'Statistical Measures of Asset Returns', sub: 'LM3', date: 'Done', done: true },
+      { id: 'qm_4', name: 'Probability Trees & Conditional Expectations', sub: 'LM4', date: 'Apr 17–18', done: false },
+      { id: 'qm_5', name: 'Portfolio Mathematics', sub: 'LM5', date: 'Apr 19–20', done: false },
+      { id: 'qm_6', name: 'Simulation Methods', sub: 'LM6', date: 'Apr 21', done: false },
+      { id: 'qm_7', name: 'Estimation and Inference', sub: 'LM7', date: 'Apr 22–23', done: false },
+      { id: 'qm_8', name: 'Hypothesis Testing', sub: 'LM8', date: 'Apr 23–24', done: false },
+      { id: 'qm_9', name: 'Parametric & Non-Parametric Tests', sub: 'LM9', date: 'Apr 25', done: false },
+      { id: 'qm_10', name: 'Simple Linear Regression', sub: 'LM10', date: 'Apr 26–27', done: false },
+      { id: 'qm_11', name: 'Introduction to Big Data Techniques', sub: 'LM11', date: 'Apr 28', done: false },
+    ]
+  },
+  {
+    id: 'fi',
+    name: 'Fixed Income',
+    weight: '11–14%',
+    priority: 'high',
+    start: 'Apr 29',
+    end: 'May 26',
+    modules: [
+      { id: 'fi_1', name: 'Fixed-Income Instrument Features', sub: 'LM1', date: 'Apr 29–30', done: false },
+      { id: 'fi_2', name: 'Fixed-Income Cash Flows and Types', sub: 'LM2', date: 'May 1–2', done: false },
+      { id: 'fi_3', name: 'Fixed-Income Issuance and Trading', sub: 'LM3', date: 'May 3–4', done: false },
+      { id: 'fi_4', name: 'Fixed-Income Markets for Corporate Issuers', sub: 'LM4', date: 'May 5–6', done: false },
+      { id: 'fi_5', name: 'Fixed-Income Markets for Government Issuers', sub: 'LM5', date: 'May 7–8', done: false },
+      { id: 'fi_6', name: 'Fixed-Income Bond Valuation: Prices and Yields', sub: 'LM6', date: 'May 9–10', done: false },
+      { id: 'fi_7', name: 'Yield and Yield Spread Measures', sub: 'LM7', date: 'May 11–12', done: false },
+      { id: 'fi_8', name: 'Bond Prices, Spot Rates, and Forward Rates', sub: 'LM8', date: 'May 13–14', done: false },
+      { id: 'fi_9', name: 'Interest Rate Risk and Return', sub: 'LM9', date: 'May 15–17', done: false },
+      { id: 'fi_10', name: 'Curve-Based and Empirical Fixed-Income Risk Measures', sub: 'LM10', date: 'May 18–19', done: false },
+      { id: 'fi_11', name: 'Credit Risk', sub: 'LM11', date: 'May 20–21', done: false },
+      { id: 'fi_12', name: 'Credit Analysis for Government Issuers', sub: 'LM12', date: 'May 22–23', done: false },
+      { id: 'fi_13', name: 'Credit Analysis for Corporate Issuers', sub: 'LM13', date: 'May 24–26', done: false },
+    ]
+  },
+  {
+    id: 'der',
+    name: 'Derivatives',
+    weight: '5–7%',
+    priority: 'lower',
+    start: 'May 27',
+    end: 'Jun 6',
+    modules: [
+      { id: 'der_1', name: 'Derivative Instrument and Derivative Market Features', sub: 'LM1', date: 'May 27–28', done: false },
+      { id: 'der_2', name: 'Forward Commitment and Contingent Claim Features and Instruments', sub: 'LM2', date: 'May 29–30', done: false },
+      { id: 'der_3', name: 'Derivative Benefits, Risks, and Issuer and Investor Uses', sub: 'LM3', date: 'May 31–Jun 1', done: false },
+      { id: 'der_4', name: 'Arbitrage, Replication, and the Cost of Carry', sub: 'LM4', date: 'Jun 2–3', done: false },
+      { id: 'der_5', name: 'Pricing and Valuation of Forward Contracts and for an Underlying with Varying Maturities', sub: 'LM5', date: 'Jun 4–5', done: false },
+      { id: 'der_6', name: 'Pricing and Valuation of Options', sub: 'LM6', date: 'Jun 6', done: false },
+    ]
+  },
+  {
+    id: 'alt',
+    name: 'Alternative Investments',
+    weight: '5–7%',
+    priority: 'lower',
+    start: 'Jun 7',
+    end: 'Jun 18',
+    modules: [
+      { id: 'alt_1', name: 'Alternative Investment Features, Methods, and Structures', sub: 'LM1', date: 'Jun 7–8', done: false },
+      { id: 'alt_2', name: 'Alternative Investment Performance and Returns', sub: 'LM2', date: 'Jun 9–10', done: false },
+      { id: 'alt_3', name: 'Investments in Private Capital: Equity and Debt', sub: 'LM3', date: 'Jun 11–12', done: false },
+      { id: 'alt_4', name: 'Real Estate and Infrastructure', sub: 'LM4', date: 'Jun 13–14', done: false },
+      { id: 'alt_5', name: 'Natural Resources and Hedge Funds', sub: 'LM5', date: 'Jun 15–16', done: false },
+      { id: 'alt_6', name: 'Introduction to Digital Assets', sub: 'LM6', date: 'Jun 17–18', done: false },
+    ]
+  },
+  {
+    id: 'fsa',
+    name: 'Financial Statement Analysis',
+    weight: '11–14%',
+    priority: 'high',
+    start: 'Jun 19',
+    end: 'Jul 16',
+    modules: [
+      { id: 'fsa_1', name: 'Introduction to Financial Statement Analysis', sub: 'LM1', date: 'Jun 19–20', done: false },
+      { id: 'fsa_2', name: 'Analyzing Income Statements', sub: 'LM2', date: 'Jun 21–22', done: false },
+      { id: 'fsa_3', name: 'Analyzing Balance Sheets', sub: 'LM3', date: 'Jun 23–24', done: false },
+      { id: 'fsa_4', name: 'Analyzing Statements of Cash Flows I', sub: 'LM4', date: 'Jun 25–26', done: false },
+      { id: 'fsa_5', name: 'Analyzing Statements of Cash Flows II', sub: 'LM5', date: 'Jun 27–28', done: false },
+      { id: 'fsa_6', name: 'Analysis of Inventories', sub: 'LM6', date: 'Jun 29–30', done: false },
+      { id: 'fsa_7', name: 'Analysis of Long-Lived Assets', sub: 'LM7', date: 'Jul 1–2', done: false },
+      { id: 'fsa_8', name: 'Topics in Long-Lived Assets', sub: 'LM8', date: 'Jul 3–4', done: false },
+      { id: 'fsa_9', name: 'Analysis of Income Taxes', sub: 'LM9', date: 'Jul 5–6', done: false },
+      { id: 'fsa_10', name: 'Analysis of Long-Term Liabilities', sub: 'LM10', date: 'Jul 7–8', done: false },
+      { id: 'fsa_11', name: 'Financial Reporting Quality', sub: 'LM11', date: 'Jul 9–10', done: false },
+      { id: 'fsa_12', name: 'Financial Analysis Techniques', sub: 'LM12', date: 'Jul 11–12', done: false },
+      { id: 'fsa_13', name: 'Introduction to Financial Statement Modeling', sub: 'LM13', date: 'Jul 13–16', done: false },
+    ]
+  },
+  {
+    id: 'eq',
+    name: 'Equity Investments',
+    weight: '11–14%',
+    priority: 'high',
+    start: 'Jul 17',
+    end: 'Aug 7',
+    modules: [
+      { id: 'eq_1', name: 'Market Organization and Structure', sub: 'LM1', date: 'Jul 17–18', done: false },
+      { id: 'eq_2', name: 'Security Market Indexes', sub: 'LM2', date: 'Jul 19–20', done: false },
+      { id: 'eq_3', name: 'Market Efficiency', sub: 'LM3', date: 'Jul 21–22', done: false },
+      { id: 'eq_4', name: 'Overview of Equity Securities', sub: 'LM4', date: 'Jul 23–24', done: false },
+      { id: 'eq_5', name: 'Company Analysis: Past and Present', sub: 'LM5', date: 'Jul 25–26', done: false },
+      { id: 'eq_6', name: 'Company Analysis: Forecasting', sub: 'LM6', date: 'Jul 27–28', done: false },
+      { id: 'eq_7', name: 'Equity Valuation: Concepts and Basic Tools', sub: 'LM7', date: 'Jul 29–31', done: false },
+      { id: 'eq_8', name: 'Equity Valuation: Applications and Processes', sub: 'LM8', date: 'Aug 1–3', done: false },
+      { id: 'eq_9', name: 'Introduction to Industry and Company Analysis', sub: 'LM9', date: 'Aug 4–7', done: false },
+    ]
+  },
+  {
+    id: 'pm',
+    name: 'Portfolio Management',
+    weight: '5–7%',
+    priority: 'lower',
+    start: 'Aug 8',
+    end: 'Aug 24',
+    modules: [
+      { id: 'pm_1', name: 'Portfolio Risk and Return: Part I', sub: 'LM1', date: 'Aug 8–10', done: false },
+      { id: 'pm_2', name: 'Portfolio Risk and Return: Part II', sub: 'LM2', date: 'Aug 11–13', done: false },
+      { id: 'pm_3', name: 'Portfolio Management: An Overview', sub: 'LM3', date: 'Aug 14–16', done: false },
+      { id: 'pm_4', name: 'Basics of Portfolio Planning and Construction', sub: 'LM4', date: 'Aug 17–19', done: false },
+      { id: 'pm_5', name: 'The Behavioral Biases of Individuals', sub: 'LM5', date: 'Aug 20–22', done: false },
+      { id: 'pm_6', name: 'Introduction to Risk Management', sub: 'LM6', date: 'Aug 23–24', done: false },
+    ]
+  },
+  {
+    id: 'ci',
+    name: 'Corporate Issuers',
+    weight: '6–9%',
+    priority: 'medium',
+    start: 'Aug 25',
+    end: 'Sep 7',
+    modules: [
+      { id: 'ci_1', name: 'Organizational Forms, Corporate Issuer Features, and Ownership', sub: 'LM1', date: 'Aug 25–26', done: false },
+      { id: 'ci_2', name: 'Investors and Other Stakeholders', sub: 'LM2', date: 'Aug 27–28', done: false },
+      { id: 'ci_3', name: 'Corporate Governance: Mechanisms and Risks', sub: 'LM3', date: 'Aug 29–30', done: false },
+      { id: 'ci_4', name: 'Working Capital and Liquidity', sub: 'LM4', date: 'Aug 31–Sep 1', done: false },
+      { id: 'ci_5', name: 'Capital Investments and Capital Allocation', sub: 'LM5', date: 'Sep 2–4', done: false },
+      { id: 'ci_6', name: 'Capital Structure', sub: 'LM6', date: 'Sep 5–6', done: false },
+      { id: 'ci_7', name: 'Business Models', sub: 'LM7', date: 'Sep 7', done: false },
+    ]
+  },
+  {
+    id: 'econ',
+    name: 'Economics',
+    weight: '6–9%',
+    priority: 'medium',
+    start: 'Sep 8',
+    end: 'Sep 23',
+    modules: [
+      { id: 'econ_1', name: 'Firms and Market Structures', sub: 'LM1', date: 'Sep 8–9', done: false },
+      { id: 'econ_2', name: 'Understanding Business Cycles', sub: 'LM2', date: 'Sep 10–11', done: false },
+      { id: 'econ_3', name: 'Fiscal Policy', sub: 'LM3', date: 'Sep 12–13', done: false },
+      { id: 'econ_4', name: 'Monetary Policy', sub: 'LM4', date: 'Sep 14–15', done: false },
+      { id: 'econ_5', name: 'Introduction to Geopolitics', sub: 'LM5', date: 'Sep 16–17', done: false },
+      { id: 'econ_6', name: 'International Trade', sub: 'LM6', date: 'Sep 18–19', done: false },
+      { id: 'econ_7', name: 'Capital Flows and the FX Market', sub: 'LM7', date: 'Sep 20–21', done: false },
+      { id: 'econ_8', name: 'Exchange Rate Calculations', sub: 'LM8', date: 'Sep 22–23', done: false },
+    ]
+  },
+  {
+    id: 'eth',
+    name: 'Ethics',
+    weight: '15–20%',
+    priority: 'high',
+    start: 'Sep 24',
+    end: 'Oct 10',
+    modules: [
+      { id: 'eth_1', name: 'Ethics and Trust in the Investment Profession', sub: 'LM1', date: 'Sep 24–25', done: false },
+      { id: 'eth_2', name: 'Code of Ethics and Standards of Professional Conduct', sub: 'LM2', date: 'Sep 26–27', done: false },
+      { id: 'eth_3', name: 'Guidance for Standards I–VII (Part 1)', sub: 'LM3', date: 'Sep 28–30', done: false },
+      { id: 'eth_4', name: 'Guidance for Standards I–VII (Part 2)', sub: 'LM4', date: 'Oct 1–3', done: false },
+      { id: 'eth_5', name: 'Guidance for Standards I–VII (Part 3)', sub: 'LM5', date: 'Oct 4–5', done: false },
+      { id: 'eth_6', name: 'Introduction to the Global Investment Performance Standards (GIPS)', sub: 'LM6', date: 'Oct 6–7', done: false },
+      { id: 'eth_7', name: 'Ethics Application', sub: 'LM7', date: 'Oct 8–10', done: false },
+    ]
+  },
+];
+
+// ════════════════════════════════════════════════
+// WEEKLY DATA
+// ════════════════════════════════════════════════
+
+const WEEKS = [];
+const startDate = new Date('2026-04-17');
+let weekStart = new Date(startDate);
+let weekNum = 1;
+
+const topicRanges = [
+  { name: 'Quantitative Methods', s: new Date('2026-04-17'), e: new Date('2026-04-28') },
+  { name: 'Fixed Income', s: new Date('2026-04-29'), e: new Date('2026-05-26') },
+  { name: 'Derivatives', s: new Date('2026-05-27'), e: new Date('2026-06-06') },
+  { name: 'Alternative Investments', s: new Date('2026-06-07'), e: new Date('2026-06-18') },
+  { name: 'Financial Statement Analysis', s: new Date('2026-06-19'), e: new Date('2026-07-16') },
+  { name: 'Equity Investments', s: new Date('2026-07-17'), e: new Date('2026-08-07') },
+  { name: 'Portfolio Management', s: new Date('2026-08-08'), e: new Date('2026-08-24') },
+  { name: 'Corporate Issuers', s: new Date('2026-08-25'), e: new Date('2026-09-07') },
+  { name: 'Economics', s: new Date('2026-09-08'), e: new Date('2026-09-23') },
+  { name: 'Ethics', s: new Date('2026-09-24'), e: new Date('2026-10-10') },
+];
+
+const reviewStart = new Date('2026-10-11');
+const reviewLabels = [
+  'Ethics Re-read + EOCQs',
+  'FSA + Fixed Income Review',
+  'Equity + QM + Econ + Mock 1',
+  'Mock 2 + Weak Areas',
+  'Wind Down — No New Material'
+];
+
+while (weekStart < EXAM_DATE) {
+  const weekEnd = new Date(weekStart);
+  weekEnd.setDate(weekEnd.getDate() + 6);
+  if (weekEnd > EXAM_DATE) weekEnd.setTime(EXAM_DATE.getTime() - 86400000);
+
+  let topic = 'Review';
+  let target = 17;
+
+  if (weekStart >= reviewStart) {
+    const ri = Math.min(Math.floor((weekStart - reviewStart) / (7 * 86400000)), reviewLabels.length - 1);
+    topic = 'Review: ' + reviewLabels[ri];
+    target = ri >= reviewLabels.length - 1 ? 10 : 18;
+  } else {
+    const matches = topicRanges.filter(t => t.s <= weekEnd && t.e >= weekStart);
+    topic = matches.map(t => t.name).join(' → ');
+  }
+
+  const fmt = d => d.toLocaleDateString('en-GB', { month: 'short', day: 'numeric' });
+  WEEKS.push({
+    num: weekNum,
+    start: fmt(weekStart),
+    end: fmt(weekEnd),
+    startDate: new Date(weekStart),
+    topic,
+    target
+  });
+
+  weekStart.setDate(weekStart.getDate() + 7);
+  weekNum++;
+}
+
+// ════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════
+
+function loadState() {
+  try {
+    return JSON.parse(localStorage.getItem('cfa_tracker_state')) || {};
+  } catch { return {}; }
+}
+
+function saveState(state) {
+  localStorage.setItem('cfa_tracker_state', JSON.stringify(state));
+}
+
+let state = loadState();
+
+function isModuleDone(id) {
+  return state.modules?.[id] ?? false;
+}
+
+function setModuleDone(id, done) {
+  if (!state.modules) state.modules = {};
+  state.modules[id] = done;
+  saveState(state);
+}
+
+function getWeekHours(weekNum) {
+  return state.weekHours?.[weekNum] ?? '';
+}
+
+function setWeekHours(weekNum, val) {
+  if (!state.weekHours) state.weekHours = {};
+  state.weekHours[weekNum] = val;
+  saveState(state);
+}
+
+// ════════════════════════════════════════════════
+// RENDER
+// ════════════════════════════════════════════════
+
+function getAllModules() {
+  const all = [];
+  TOPICS.forEach(t => t.modules.forEach(m => all.push(m)));
+  return all;
+}
+
+function countDone() {
+  return getAllModules().filter(m => m.done || isModuleDone(m.id)).length;
+}
+
+function totalModules() {
+  return getAllModules().length;
+}
+
+function totalHoursLogged() {
+  let h = 32; // banked
+  if (state.weekHours) {
+    Object.values(state.weekHours).forEach(v => {
+      const n = parseFloat(v);
+      if (!isNaN(n)) h += n;
+    });
+  }
+  return h;
+}
+
+function updateStats() {
+  const now = new Date();
+  const days = Math.max(0, Math.ceil((EXAM_DATE - now) / 86400000));
+  const weeks = (days / 7).toFixed(1);
+  const done = countDone();
+  const total = totalModules();
+  const pct = Math.round((done / total) * 100);
+  const hours = totalHoursLogged();
+
+  document.getElementById('days-remaining').textContent = days;
+  document.getElementById('modules-done').textContent = `${done}/${total}`;
+  document.getElementById('hours-logged').textContent = hours;
+
+  document.getElementById('overall-progress-bar').style.width = pct + '%';
+  document.getElementById('overall-progress-text').textContent = pct + '%';
+  document.getElementById('progress-left').textContent = `${done} of ${total} modules complete`;
+
+  document.getElementById('stat-weeks').textContent = weeks;
+
+  // Topics complete
+  const topicsDone = TOPICS.filter(t =>
+    t.modules.every(m => m.done || isModuleDone(m.id))
+  ).length;
+  document.getElementById('stat-topics-done').textContent = `${topicsDone}/10`;
+
+  // Current topic
+  const currentTopic = TOPICS.find(t =>
+    !t.modules.every(m => m.done || isModuleDone(m.id))
+  );
+  document.getElementById('stat-current-topic').textContent = currentTopic ? currentTopic.name.split(' ').slice(0,2).join(' ') : 'Done!';
+  document.getElementById('stat-current-topic').style.fontSize = '16px';
+
+  // Hours this week
+  const thisWeek = WEEKS.find(w => {
+    const ws = w.startDate;
+    const we = new Date(ws); we.setDate(we.getDate() + 7);
+    return now >= ws && now < we;
+  });
+  const thisWeekHrs = thisWeek ? (getWeekHours(thisWeek.num) || '0') : '0';
+  document.getElementById('stat-hours-week').textContent = thisWeekHrs;
+}
+
+function renderTopics() {
+  const container = document.getElementById('tab-topics');
+  container.innerHTML = '';
+
+  TOPICS.forEach(topic => {
+    const doneCount = topic.modules.filter(m => m.done || isModuleDone(m.id)).length;
+    const totalCount = topic.modules.length;
+    const allDone = doneCount === totalCount;
+    const pct = Math.round((doneCount / totalCount) * 100);
+
+    const priorityClass = `priority-${topic.priority}`;
+
+    const card = document.createElement('div');
+    card.className = `topic-card${allDone ? ' completed' : ''}`;
+
+    card.innerHTML = `
+      <div class="topic-header">
+        <div class="topic-header-left">
+          <span class="topic-number ${priorityClass}">${topic.weight}</span>
+          <span class="topic-name">${topic.name}</span>
+        </div>
+        <div class="topic-header-right">
+          <span class="module-date">${topic.start} – ${topic.end}</span>
+          <span style="font-size:12px;color:var(--text-dim)">${doneCount}/${totalCount}</span>
+          <div class="topic-progress-mini">
+            <div class="topic-progress-mini-inner" style="width:${pct}%"></div>
+          </div>
+          <span class="topic-chevron">▸</span>
+        </div>
+      </div>
+      <div class="topic-modules"></div>
+    `;
+
+    const header = card.querySelector('.topic-header');
+    const modulesDiv = card.querySelector('.topic-modules');
+
+    header.addEventListener('click', () => {
+      card.classList.toggle('open');
+    });
+
+    topic.modules.forEach(mod => {
+      const isDone = mod.done || isModuleDone(mod.id);
+      const row = document.createElement('div');
+      row.className = `module-row${isDone ? ' done' : ''}`;
+
+      const isPreDone = mod.done; // hardcoded as done
+
+      let badgeHtml = '';
+      if (isDone) {
+        badgeHtml = '<span class="module-badge badge-done">DONE</span>';
+      } else if (mod === topic.modules.find(m => !m.done && !isModuleDone(m.id))) {
+        badgeHtml = '<span class="module-badge badge-current">NEXT</span>';
+      }
+
+      row.innerHTML = `
+        <div class="module-checkbox${isDone ? ' checked' : ''}" data-id="${mod.id}" data-pre="${isPreDone}"></div>
+        <div class="module-info">
+          <div class="module-title">${mod.name}</div>
+          <div class="module-subtitle">${mod.sub}</div>
+        </div>
+        <span class="module-date">${mod.date}</span>
+        ${badgeHtml}
+      `;
+
+      const checkbox = row.querySelector('.module-checkbox');
+      checkbox.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (isPreDone) return; // can't uncheck hardcoded ones
+        const newState = !isModuleDone(mod.id);
+        setModuleDone(mod.id, newState);
+        renderTopics();
+        updateStats();
+      });
+
+      modulesDiv.appendChild(row);
+    });
+
+    container.appendChild(card);
+  });
+}
+
+function renderWeekly() {
+  const container = document.getElementById('tab-weekly');
+  container.innerHTML = '<p class="section-title">Weekly Hours Tracker</p>';
+
+  const now = new Date();
+
+  WEEKS.forEach(week => {
+    const ws = week.startDate;
+    const we = new Date(ws); we.setDate(we.getDate() + 7);
+    const isCurrent = now >= ws && now < we;
+    const isPast = now >= we;
+
+    const card = document.createElement('div');
+    card.className = `week-card${isCurrent ? ' current-week' : ''}${isPast ? ' past-week' : ''}`;
+
+    const savedHours = getWeekHours(week.num);
+
+    card.innerHTML = `
+      <div class="week-left">
+        <div class="week-label">Week ${week.num}${isCurrent ? ' ← YOU ARE HERE' : ''}</div>
+        <div class="week-dates">${week.start} – ${week.end}</div>
+        <div class="week-topic">${week.topic}</div>
+      </div>
+      <div class="week-hours">
+        <div class="week-target">Target: ${week.target}h</div>
+        <input type="number" min="0" max="40" step="0.5" placeholder="0"
+               value="${savedHours}" data-week="${week.num}">
+        <label>hrs</label>
+      </div>
+    `;
+
+    const input = card.querySelector('input');
+    input.addEventListener('change', () => {
+      setWeekHours(week.num, input.value);
+      updateStats();
+    });
+
+    container.appendChild(card);
+  });
+}
+
+// ════════════════════════════════════════════════
+// TABS
+// ════════════════════════════════════════════════
+
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+// ════════════════════════════════════════════════
+// RESET
+// ════════════════════════════════════════════════
+
+function resetAll() {
+  if (confirm('Are you sure? This will reset ALL progress, hours, and checkboxes.')) {
+    localStorage.removeItem('cfa_tracker_state');
+    state = {};
+    renderTopics();
+    renderWeekly();
+    updateStats();
+  }
+}
+
+// ════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════
+
+renderTopics();
+renderWeekly();
+updateStats();
+</script>
+</body>
+</html>
