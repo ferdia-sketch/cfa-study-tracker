@@ -729,8 +729,8 @@ const EXAM_DATE = new Date('2026-11-11');
 
 const TOPICS = [
   {
-    id: 'qm1',
-    name: 'Quantitative Methods (Part 1)',
+    id: 'qm',
+    name: 'Quantitative Methods',
     weight: '6–9%',
     priority: 'medium',
     start: 'Apr 17',
@@ -746,6 +746,11 @@ const TOPICS = [
       { id: 'qm_4', name: 'Probability Trees & Conditional Expectations', sub: 'LM4', date: 'Done', done: true },
       { id: 'qm_5', name: 'Portfolio Mathematics', sub: 'LM5', date: 'Done', done: true },
       { id: 'qm_6', name: 'Simulation Methods', sub: 'LM6', date: 'Done', done: true },
+      { id: 'qm_7', name: 'Estimation and Inference', sub: 'LM7', date: 'Done', done: true },
+      { id: 'qm_8', name: 'Hypothesis Testing', sub: 'LM8', date: 'Done', done: true },
+      { id: 'qm_9', name: 'Parametric & Non-Parametric Tests', sub: 'LM9', date: 'Done', done: true },
+      { id: 'qm_10', name: 'Simple Linear Regression', sub: 'LM10', date: 'Done', done: true },
+      { id: 'qm_11', name: 'Introduction to Big Data Techniques', sub: 'LM11', date: 'Done', done: true },
     ]
   },
   {
@@ -870,28 +875,12 @@ const TOPICS = [
       { id: 'ci_7', name: 'Business Models', sub: 'LM7', date: 'Aug 24', done: false },
     ]
   },
-  {
-    id: 'qm2',
-    name: 'Quantitative Methods (Part 2)',
-    weight: '6–9%',
-    priority: 'medium',
-    start: 'Aug 25',
-    end: 'Sep 3',
-    modules: [
-      { id: 'qm2_7', name: 'Estimation and Inference', sub: 'LM7', date: 'Done', done: true },
-      { id: 'qm2_8', name: 'Hypothesis Testing', sub: 'LM8', date: 'Done', done: true },
-      { id: 'qm2_9', name: 'Parametric & Non-Parametric Tests', sub: 'LM9', date: 'Done', done: true },
-      { id: 'qm2_10', name: 'Simple Linear Regression', sub: 'LM10', date: 'Done', done: true },
-      { id: 'qm2_11', name: 'Introduction to Big Data Techniques', sub: 'LM11', date: 'Done', done: true },
-    ]
-  },
-  {
     id: 'pm',
     name: 'Portfolio Management',
     weight: '8–12%',
     priority: 'high',
-    start: 'Sep 4',
-    end: 'Sep 18',
+    start: 'Aug 25',
+    end: 'Sep 11',
     modules: [
       { id: 'pm_1', name: 'Portfolio Risk and Return: Part I', sub: 'LM1', date: 'Sep 4–6', done: false },
       { id: 'pm_2', name: 'Portfolio Risk and Return: Part II', sub: 'LM2', date: 'Sep 7–8', done: false },
@@ -906,8 +895,8 @@ const TOPICS = [
     name: 'Economics',
     weight: '6–9%',
     priority: 'medium',
-    start: 'Sep 19',
-    end: 'Oct 8',
+    start: 'Sep 12',
+    end: 'Oct 1',
     modules: [
       { id: 'econ_p1', name: 'Demand and Supply Analysis: Introduction', sub: 'Prerequisite 1', date: 'Sep 19–20', done: false },
       { id: 'econ_p2', name: 'Demand and Supply Analysis: Consumer Demand', sub: 'Prerequisite 2', date: 'Sep 21', done: false },
@@ -927,7 +916,7 @@ const TOPICS = [
     name: 'Ethical and Professional Standards',
     weight: '15–20%',
     priority: 'highest',
-    start: 'Oct 9',
+    start: 'Oct 2',
     end: 'Oct 25',
     modules: [
       { id: 'eth_1', name: 'Ethics and Trust in the Investment Profession', sub: 'LM1', date: 'Oct 9', done: false },
@@ -951,17 +940,16 @@ let weekStart = new Date(startDate);
 let weekNum = 1;
 
 const topicRanges = [
-  { name: 'Quantitative Methods (Part 1)', s: new Date('2026-04-17'), e: new Date('2026-05-09') },
+  { name: 'Quantitative Methods', s: new Date('2026-04-17'), e: new Date('2026-05-09') },
   { name: 'Financial Statement Analysis', s: new Date('2026-05-10'), e: new Date('2026-06-07') },
   { name: 'Fixed Income', s: new Date('2026-06-08'), e: new Date('2026-07-02') },
   { name: 'Equity Investments', s: new Date('2026-07-03'), e: new Date('2026-07-21') },
   { name: 'Alternative Investments', s: new Date('2026-07-22'), e: new Date('2026-08-01') },
   { name: 'Derivatives', s: new Date('2026-08-02'), e: new Date('2026-08-11') },
   { name: 'Corporate Issuers', s: new Date('2026-08-12'), e: new Date('2026-08-24') },
-  { name: 'Quantitative Methods (Part 2)', s: new Date('2026-08-25'), e: new Date('2026-09-03') },
-  { name: 'Portfolio Management', s: new Date('2026-09-04'), e: new Date('2026-09-18') },
-  { name: 'Economics', s: new Date('2026-09-19'), e: new Date('2026-10-08') },
-  { name: 'Ethical and Professional Standards', s: new Date('2026-10-09'), e: new Date('2026-10-25') },
+  { name: 'Portfolio Management', s: new Date('2026-08-25'), e: new Date('2026-09-11') },
+  { name: 'Economics', s: new Date('2026-09-12'), e: new Date('2026-10-01') },
+  { name: 'Ethical and Professional Standards', s: new Date('2026-10-02'), e: new Date('2026-10-25') },
 ];
 
 const reviewStart = new Date('2026-10-26');
