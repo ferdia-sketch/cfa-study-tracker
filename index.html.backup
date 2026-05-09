@@ -577,34 +577,8 @@
 
     <!-- Sync -->
   <div class="sync-bar">
-    <button class="sync-btn" onclick="syncToGist()">☁️ Save to Cloud</button>
-    <button class="sync-btn" onclick="syncFromGist()">☁️ Load from Cloud</button>
-    <button class="sync-btn" onclick="toggleSyncSettings()" style="margin-left:auto;opacity:0.6">⚙️ Sync Settings</button>
-  </div>
-  <div id="sync-settings" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:16px;">
-    <p style="font-size:13px;color:var(--text-dim);margin-bottom:10px;">
-      <strong style="color:var(--text)">GitHub Gist Sync</strong> — Your progress syncs across all devices via a private GitHub Gist.<br>
-      Create a <a href="https://github.com/settings/tokens/new?scopes=gist&description=CFA+Tracker+Sync" target="_blank" style="color:var(--accent)">Personal Access Token</a> with <code style="background:var(--surface2);padding:2px 6px;border-radius:4px;font-size:12px">gist</code> scope and paste it below.
-    </p>
-    <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;">
-      <label style="font-size:12px;color:var(--text-dim);white-space:nowrap;">Token:</label>
-      <input type="password" id="gist-token" placeholder="ghp_xxxxxxxxxxxx" 
-             style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:8px 10px;font-size:13px;font-family:monospace;"
-             value="">
-    </div>
-    <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;">
-      <label style="font-size:12px;color:var(--text-dim);white-space:nowrap;">Gist ID:</label>
-      <input type="text" id="gist-id" placeholder="abc123def456..." 
-             style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:8px 10px;font-size:13px;font-family:monospace;"
-             value="">
-    </div>
-    <div style="display:flex;gap:8px;align-items:center;">
-      <button class="sync-btn" onclick="saveSyncSettings()" style="background:var(--green-dim);color:var(--green);border-color:var(--green)">Save Settings</button>
-      <label style="font-size:12px;color:var(--text-dim);display:flex;align-items:center;gap:6px;">
-        <input type="checkbox" id="auto-sync-toggle"> Auto-sync on changes
-      </label>
-      <span id="sync-status" style="font-size:12px;color:var(--text-dim);margin-left:auto;"></span>
-    </div>
+    <button class="sync-btn" onclick="exportState()">Export Progress</button>
+    <button class="sync-btn" onclick="importState()">Import Progress</button>
   </div>
   <div class="sync-toast" id="sync-toast"></div>
 
@@ -734,7 +708,7 @@ const TOPICS = [
     weight: '6–9%',
     priority: 'medium',
     start: 'Apr 17',
-    end: 'May 5',
+    end: 'Apr 28',
     modules: [
       { id: 'qm_p1', name: 'Interest Rates, PV, FV', sub: 'Prerequisite 1', date: 'Done', done: true },
       { id: 'qm_p2', name: 'Data Organization & Descriptive Stats', sub: 'Prerequisite 2', date: 'Done', done: true },
@@ -743,39 +717,14 @@ const TOPICS = [
       { id: 'qm_1', name: 'Rates and Returns', sub: 'LM1', date: 'Done', done: true },
       { id: 'qm_2', name: 'Time Value of Money in Finance', sub: 'LM2', date: 'Done', done: true },
       { id: 'qm_3', name: 'Statistical Measures of Asset Returns', sub: 'LM3', date: 'Done', done: true },
-      { id: 'qm_4', name: 'Probability Trees & Conditional Expectations', sub: 'LM4', date: 'Done', done: true },
-      { id: 'qm_5', name: 'Portfolio Mathematics', sub: 'LM5', date: 'Done', done: true },
-      { id: 'qm_6', name: 'Simulation Methods', sub: 'LM6', date: 'Done', done: true },
-      { id: 'qm_7', name: 'Estimation and Inference', sub: 'LM7', date: 'Done', done: true },
-      { id: 'qm_8', name: 'Hypothesis Testing', sub: 'LM8', date: 'Done', done: true },
-      { id: 'qm_9', name: 'Parametric & Non-Parametric Tests', sub: 'LM9', date: 'Done', done: true },
-      { id: 'qm_10', name: 'Simple Linear Regression', sub: 'LM10', date: 'Done', done: true },
-      { id: 'qm_11', name: 'Introduction to Big Data Techniques', sub: 'LM11', date: 'Done', done: true },
-    ]
-  },
-  {
-    id: 'fsa',
-    name: 'Financial Statement Analysis',
-    weight: '11–14%',
-    priority: 'high',
-    start: 'May 10',
-    end: 'Jun 7',
-    modules: [
-      { id: 'fsa_p1', name: 'Introduction to Financial Reporting', sub: 'Prerequisite 1', date: 'Done', done: true },
-      { id: 'fsa_p2', name: 'Financial Reporting Standards', sub: 'Prerequisite 2', date: 'Jun 23–24', done: false },
-      { id: 'fsa_1', name: 'Introduction to Financial Statement Analysis', sub: 'LM1', date: 'Jun 25–26', done: false },
-      { id: 'fsa_2', name: 'Analyzing Income Statements', sub: 'LM2', date: 'Jun 27', done: false },
-      { id: 'fsa_3', name: 'Analyzing Balance Sheets', sub: 'LM3', date: 'Jun 28–29', done: false },
-      { id: 'fsa_4', name: 'Analyzing Statements of Cash Flows I', sub: 'LM4', date: 'Jun 30–Jul 1', done: false },
-      { id: 'fsa_5', name: 'Analyzing Statements of Cash Flows II', sub: 'LM5', date: 'Jul 2–3', done: false },
-      { id: 'fsa_6', name: 'Analysis of Inventories', sub: 'LM6', date: 'Jul 4–5', done: false },
-      { id: 'fsa_7', name: 'Analysis of Long-Lived Assets', sub: 'LM7', date: 'Jul 6', done: false },
-      { id: 'fsa_8', name: 'Topics in Long-Lived Assets', sub: 'LM8', date: 'Jul 7–8', done: false },
-      { id: 'fsa_9', name: 'Analysis of Income Taxes', sub: 'LM9', date: 'Jul 9–10', done: false },
-      { id: 'fsa_10', name: 'Analysis of Long-Term Liabilities', sub: 'LM10', date: 'Jul 11–12', done: false },
-      { id: 'fsa_11', name: 'Financial Reporting Quality', sub: 'LM11', date: 'Jul 13–14', done: false },
-      { id: 'fsa_12', name: 'Financial Analysis Techniques', sub: 'LM12', date: 'Jul 15', done: false },
-      { id: 'fsa_13', name: 'Introduction to Financial Statement Modeling', sub: 'LM13', date: 'Jul 16–19', done: false },
+      { id: 'qm_4', name: 'Probability Trees & Conditional Expectations', sub: 'LM4', date: 'Apr 17–18', done: false },
+      { id: 'qm_5', name: 'Portfolio Mathematics', sub: 'LM5', date: 'Apr 19–20', done: false },
+      { id: 'qm_6', name: 'Simulation Methods', sub: 'LM6', date: 'Apr 21', done: false },
+      { id: 'qm_7', name: 'Estimation and Inference', sub: 'LM7', date: 'Apr 22–23', done: false },
+      { id: 'qm_8', name: 'Hypothesis Testing', sub: 'LM8', date: 'Apr 23–24', done: false },
+      { id: 'qm_9', name: 'Parametric & Non-Parametric Tests', sub: 'LM9', date: 'Apr 25', done: false },
+      { id: 'qm_10', name: 'Simple Linear Regression', sub: 'LM10', date: 'Apr 26–27', done: false },
+      { id: 'qm_11', name: 'Introduction to Big Data Techniques', sub: 'LM11', date: 'Apr 28', done: false },
     ]
   },
   {
@@ -783,22 +732,22 @@ const TOPICS = [
     name: 'Fixed Income',
     weight: '11–14%',
     priority: 'high',
-    start: 'May 6',
-    end: 'May 30',
+    start: 'Apr 29',
+    end: 'May 26',
     modules: [
-      { id: 'fi_1', name: 'Fixed-Income Instrument Features', sub: 'LM1', date: 'May 6–7', done: false },
-      { id: 'fi_2', name: 'Fixed-Income Cash Flows and Types', sub: 'LM2', date: 'May 8–9', done: false },
-      { id: 'fi_3', name: 'Fixed-Income Issuance and Trading', sub: 'LM3', date: 'May 10–11', done: false },
-      { id: 'fi_4', name: 'Fixed-Income Markets for Corporate Issuers', sub: 'LM4', date: 'May 12', done: false },
-      { id: 'fi_5', name: 'Fixed-Income Markets for Government Issuers', sub: 'LM5', date: 'May 13–14', done: false },
-      { id: 'fi_6', name: 'Fixed-Income Bond Valuation: Prices and Yields', sub: 'LM6', date: 'May 15–16', done: false },
-      { id: 'fi_7', name: 'Yield and Yield Spread Measures', sub: 'LM7', date: 'May 17–18', done: false },
-      { id: 'fi_8', name: 'Bond Prices, Spot Rates, and Forward Rates', sub: 'LM8', date: 'May 19–20', done: false },
-      { id: 'fi_9', name: 'Interest Rate Risk and Return', sub: 'LM9', date: 'May 21–22', done: false },
-      { id: 'fi_10', name: 'Curve-Based and Empirical Fixed-Income Risk Measures', sub: 'LM10', date: 'May 23–24', done: false },
-      { id: 'fi_11', name: 'Credit Risk', sub: 'LM11', date: 'May 25–26', done: false },
-      { id: 'fi_12', name: 'Credit Analysis for Government Issuers', sub: 'LM12', date: 'May 27–28', done: false },
-      { id: 'fi_13', name: 'Credit Analysis for Corporate Issuers', sub: 'LM13', date: 'May 29–30', done: false },
+      { id: 'fi_1', name: 'Fixed-Income Instrument Features', sub: 'LM1', date: 'Apr 29–30', done: false },
+      { id: 'fi_2', name: 'Fixed-Income Cash Flows and Types', sub: 'LM2', date: 'May 1–2', done: false },
+      { id: 'fi_3', name: 'Fixed-Income Issuance and Trading', sub: 'LM3', date: 'May 3–4', done: false },
+      { id: 'fi_4', name: 'Fixed-Income Markets for Corporate Issuers', sub: 'LM4', date: 'May 5–6', done: false },
+      { id: 'fi_5', name: 'Fixed-Income Markets for Government Issuers', sub: 'LM5', date: 'May 7–8', done: false },
+      { id: 'fi_6', name: 'Fixed-Income Bond Valuation: Prices and Yields', sub: 'LM6', date: 'May 9–10', done: false },
+      { id: 'fi_7', name: 'Yield and Yield Spread Measures', sub: 'LM7', date: 'May 11–12', done: false },
+      { id: 'fi_8', name: 'Bond Prices, Spot Rates, and Forward Rates', sub: 'LM8', date: 'May 13–14', done: false },
+      { id: 'fi_9', name: 'Interest Rate Risk and Return', sub: 'LM9', date: 'May 15–17', done: false },
+      { id: 'fi_10', name: 'Curve-Based and Empirical Fixed-Income Risk Measures', sub: 'LM10', date: 'May 18–19', done: false },
+      { id: 'fi_11', name: 'Credit Risk', sub: 'LM11', date: 'May 20–21', done: false },
+      { id: 'fi_12', name: 'Credit Analysis for Government Issuers', sub: 'LM12', date: 'May 22–23', done: false },
+      { id: 'fi_13', name: 'Credit Analysis for Corporate Issuers', sub: 'LM13', date: 'May 24–26', done: false },
     ]
   },
   {
@@ -806,15 +755,15 @@ const TOPICS = [
     name: 'Derivatives',
     weight: '5–7%',
     priority: 'lower',
-    start: 'May 31',
-    end: 'Jun 9',
+    start: 'May 27',
+    end: 'Jun 6',
     modules: [
-      { id: 'der_1', name: 'Derivative Instrument and Derivative Market Features', sub: 'LM1', date: 'May 31–Jun 1', done: false },
-      { id: 'der_2', name: 'Forward Commitment and Contingent Claim Features and Instruments', sub: 'LM2', date: 'Jun 2–3', done: false },
-      { id: 'der_3', name: 'Derivative Benefits, Risks, and Issuer and Investor Uses', sub: 'LM3', date: 'Jun 4–5', done: false },
-      { id: 'der_4', name: 'Arbitrage, Replication, and the Cost of Carry', sub: 'LM4', date: 'Jun 6–7', done: false },
-      { id: 'der_5', name: 'Pricing and Valuation of Forward Contracts and for an Underlying with Varying Maturities', sub: 'LM5', date: 'Jun 8', done: false },
-      { id: 'der_6', name: 'Pricing and Valuation of Options', sub: 'LM6', date: 'Jun 9', done: false },
+      { id: 'der_1', name: 'Derivative Instrument and Derivative Market Features', sub: 'LM1', date: 'May 27–28', done: false },
+      { id: 'der_2', name: 'Forward Commitment and Contingent Claim Features and Instruments', sub: 'LM2', date: 'May 29–30', done: false },
+      { id: 'der_3', name: 'Derivative Benefits, Risks, and Issuer and Investor Uses', sub: 'LM3', date: 'May 31–Jun 1', done: false },
+      { id: 'der_4', name: 'Arbitrage, Replication, and the Cost of Carry', sub: 'LM4', date: 'Jun 2–3', done: false },
+      { id: 'der_5', name: 'Pricing and Valuation of Forward Contracts and for an Underlying with Varying Maturities', sub: 'LM5', date: 'Jun 4–5', done: false },
+      { id: 'der_6', name: 'Pricing and Valuation of Options', sub: 'LM6', date: 'Jun 6', done: false },
     ]
   },
   {
@@ -822,15 +771,38 @@ const TOPICS = [
     name: 'Alternative Investments',
     weight: '5–7%',
     priority: 'lower',
-    start: 'Jun 10',
-    end: 'Jun 20',
+    start: 'Jun 7',
+    end: 'Jun 18',
     modules: [
-      { id: 'alt_1', name: 'Alternative Investment Features, Methods, and Structures', sub: 'LM1', date: 'Jun 10–11', done: false },
-      { id: 'alt_2', name: 'Alternative Investment Performance and Returns', sub: 'LM2', date: 'Jun 12–13', done: false },
-      { id: 'alt_3', name: 'Investments in Private Capital: Equity and Debt', sub: 'LM3', date: 'Jun 14–15', done: false },
-      { id: 'alt_4', name: 'Real Estate and Infrastructure', sub: 'LM4', date: 'Jun 16–17', done: false },
-      { id: 'alt_5', name: 'Natural Resources and Hedge Funds', sub: 'LM5', date: 'Jun 18', done: false },
-      { id: 'alt_6', name: 'Introduction to Digital Assets', sub: 'LM6', date: 'Jun 19–20', done: false },
+      { id: 'alt_1', name: 'Alternative Investment Features, Methods, and Structures', sub: 'LM1', date: 'Jun 7–8', done: false },
+      { id: 'alt_2', name: 'Alternative Investment Performance and Returns', sub: 'LM2', date: 'Jun 9–10', done: false },
+      { id: 'alt_3', name: 'Investments in Private Capital: Equity and Debt', sub: 'LM3', date: 'Jun 11–12', done: false },
+      { id: 'alt_4', name: 'Real Estate and Infrastructure', sub: 'LM4', date: 'Jun 13–14', done: false },
+      { id: 'alt_5', name: 'Natural Resources and Hedge Funds', sub: 'LM5', date: 'Jun 15–16', done: false },
+      { id: 'alt_6', name: 'Introduction to Digital Assets', sub: 'LM6', date: 'Jun 17–18', done: false },
+    ]
+  },
+  {
+    id: 'fsa',
+    name: 'Financial Statement Analysis',
+    weight: '11–14%',
+    priority: 'high',
+    start: 'Jun 19',
+    end: 'Jul 16',
+    modules: [
+      { id: 'fsa_1', name: 'Introduction to Financial Statement Analysis', sub: 'LM1', date: 'Jun 19–20', done: false },
+      { id: 'fsa_2', name: 'Analyzing Income Statements', sub: 'LM2', date: 'Jun 21–22', done: false },
+      { id: 'fsa_3', name: 'Analyzing Balance Sheets', sub: 'LM3', date: 'Jun 23–24', done: false },
+      { id: 'fsa_4', name: 'Analyzing Statements of Cash Flows I', sub: 'LM4', date: 'Jun 25–26', done: false },
+      { id: 'fsa_5', name: 'Analyzing Statements of Cash Flows II', sub: 'LM5', date: 'Jun 27–28', done: false },
+      { id: 'fsa_6', name: 'Analysis of Inventories', sub: 'LM6', date: 'Jun 29–30', done: false },
+      { id: 'fsa_7', name: 'Analysis of Long-Lived Assets', sub: 'LM7', date: 'Jul 1–2', done: false },
+      { id: 'fsa_8', name: 'Topics in Long-Lived Assets', sub: 'LM8', date: 'Jul 3–4', done: false },
+      { id: 'fsa_9', name: 'Analysis of Income Taxes', sub: 'LM9', date: 'Jul 5–6', done: false },
+      { id: 'fsa_10', name: 'Analysis of Long-Term Liabilities', sub: 'LM10', date: 'Jul 7–8', done: false },
+      { id: 'fsa_11', name: 'Financial Reporting Quality', sub: 'LM11', date: 'Jul 9–10', done: false },
+      { id: 'fsa_12', name: 'Financial Analysis Techniques', sub: 'LM12', date: 'Jul 11–12', done: false },
+      { id: 'fsa_13', name: 'Introduction to Financial Statement Modeling', sub: 'LM13', date: 'Jul 13–16', done: false },
     ]
   },
   {
@@ -838,18 +810,18 @@ const TOPICS = [
     name: 'Equity Investments',
     weight: '11–14%',
     priority: 'high',
-    start: 'Jul 20',
-    end: 'Aug 8',
+    start: 'Jul 17',
+    end: 'Aug 7',
     modules: [
-      { id: 'eq_1', name: 'Market Organization and Structure', sub: 'LM1', date: 'Jul 20–21', done: false },
-      { id: 'eq_2', name: 'Security Market Indexes', sub: 'LM2', date: 'Jul 22–23', done: false },
-      { id: 'eq_3', name: 'Market Efficiency', sub: 'LM3', date: 'Jul 24', done: false },
-      { id: 'eq_4', name: 'Overview of Equity Securities', sub: 'LM4', date: 'Jul 25–26', done: false },
-      { id: 'eq_5', name: 'Company Analysis: Past and Present', sub: 'LM5', date: 'Jul 27–28', done: false },
-      { id: 'eq_6', name: 'Company Analysis: Forecasting', sub: 'LM6', date: 'Jul 29–30', done: false },
-      { id: 'eq_7', name: 'Equity Valuation: Concepts and Basic Tools', sub: 'LM7', date: 'Jul 31–Aug 2', done: false },
-      { id: 'eq_8', name: 'Equity Valuation: Applications and Processes', sub: 'LM8', date: 'Aug 3–4', done: false },
-      { id: 'eq_9', name: 'Introduction to Industry and Company Analysis', sub: 'LM9', date: 'Aug 5–8', done: false },
+      { id: 'eq_1', name: 'Market Organization and Structure', sub: 'LM1', date: 'Jul 17–18', done: false },
+      { id: 'eq_2', name: 'Security Market Indexes', sub: 'LM2', date: 'Jul 19–20', done: false },
+      { id: 'eq_3', name: 'Market Efficiency', sub: 'LM3', date: 'Jul 21–22', done: false },
+      { id: 'eq_4', name: 'Overview of Equity Securities', sub: 'LM4', date: 'Jul 23–24', done: false },
+      { id: 'eq_5', name: 'Company Analysis: Past and Present', sub: 'LM5', date: 'Jul 25–26', done: false },
+      { id: 'eq_6', name: 'Company Analysis: Forecasting', sub: 'LM6', date: 'Jul 27–28', done: false },
+      { id: 'eq_7', name: 'Equity Valuation: Concepts and Basic Tools', sub: 'LM7', date: 'Jul 29–31', done: false },
+      { id: 'eq_8', name: 'Equity Valuation: Applications and Processes', sub: 'LM8', date: 'Aug 1–3', done: false },
+      { id: 'eq_9', name: 'Introduction to Industry and Company Analysis', sub: 'LM9', date: 'Aug 4–7', done: false },
     ]
   },
   {
@@ -857,15 +829,15 @@ const TOPICS = [
     name: 'Portfolio Management',
     weight: '5–7%',
     priority: 'lower',
-    start: 'Aug 9',
-    end: 'Aug 23',
+    start: 'Aug 8',
+    end: 'Aug 24',
     modules: [
-      { id: 'pm_1', name: 'Portfolio Risk and Return: Part I', sub: 'LM1', date: 'Aug 9–11', done: false },
-      { id: 'pm_2', name: 'Portfolio Risk and Return: Part II', sub: 'LM2', date: 'Aug 12–13', done: false },
+      { id: 'pm_1', name: 'Portfolio Risk and Return: Part I', sub: 'LM1', date: 'Aug 8–10', done: false },
+      { id: 'pm_2', name: 'Portfolio Risk and Return: Part II', sub: 'LM2', date: 'Aug 11–13', done: false },
       { id: 'pm_3', name: 'Portfolio Management: An Overview', sub: 'LM3', date: 'Aug 14–16', done: false },
       { id: 'pm_4', name: 'Basics of Portfolio Planning and Construction', sub: 'LM4', date: 'Aug 17–19', done: false },
-      { id: 'pm_5', name: 'The Behavioral Biases of Individuals', sub: 'LM5', date: 'Aug 20–21', done: false },
-      { id: 'pm_6', name: 'Introduction to Risk Management', sub: 'LM6', date: 'Aug 22–23', done: false },
+      { id: 'pm_5', name: 'The Behavioral Biases of Individuals', sub: 'LM5', date: 'Aug 20–22', done: false },
+      { id: 'pm_6', name: 'Introduction to Risk Management', sub: 'LM6', date: 'Aug 23–24', done: false },
     ]
   },
   {
@@ -873,16 +845,16 @@ const TOPICS = [
     name: 'Corporate Issuers',
     weight: '6–9%',
     priority: 'medium',
-    start: 'Aug 24',
-    end: 'Sep 5',
+    start: 'Aug 25',
+    end: 'Sep 7',
     modules: [
-      { id: 'ci_1', name: 'Organizational Forms, Corporate Issuer Features, and Ownership', sub: 'LM1', date: 'Aug 24–25', done: false },
-      { id: 'ci_2', name: 'Investors and Other Stakeholders', sub: 'LM2', date: 'Aug 26–27', done: false },
-      { id: 'ci_3', name: 'Corporate Governance: Mechanisms and Risks', sub: 'LM3', date: 'Aug 28–29', done: false },
-      { id: 'ci_4', name: 'Working Capital and Liquidity', sub: 'LM4', date: 'Aug 30', done: false },
-      { id: 'ci_5', name: 'Capital Investments and Capital Allocation', sub: 'LM5', date: 'Aug 31–Sep 2', done: false },
-      { id: 'ci_6', name: 'Capital Structure', sub: 'LM6', date: 'Sep 3–4', done: false },
-      { id: 'ci_7', name: 'Business Models', sub: 'LM7', date: 'Sep 5', done: false },
+      { id: 'ci_1', name: 'Organizational Forms, Corporate Issuer Features, and Ownership', sub: 'LM1', date: 'Aug 25–26', done: false },
+      { id: 'ci_2', name: 'Investors and Other Stakeholders', sub: 'LM2', date: 'Aug 27–28', done: false },
+      { id: 'ci_3', name: 'Corporate Governance: Mechanisms and Risks', sub: 'LM3', date: 'Aug 29–30', done: false },
+      { id: 'ci_4', name: 'Working Capital and Liquidity', sub: 'LM4', date: 'Aug 31–Sep 1', done: false },
+      { id: 'ci_5', name: 'Capital Investments and Capital Allocation', sub: 'LM5', date: 'Sep 2–4', done: false },
+      { id: 'ci_6', name: 'Capital Structure', sub: 'LM6', date: 'Sep 5–6', done: false },
+      { id: 'ci_7', name: 'Business Models', sub: 'LM7', date: 'Sep 7', done: false },
     ]
   },
   {
@@ -890,20 +862,17 @@ const TOPICS = [
     name: 'Economics',
     weight: '6–9%',
     priority: 'medium',
-    start: 'Sep 6',
-    end: 'Sep 25',
+    start: 'Sep 8',
+    end: 'Sep 23',
     modules: [
-      { id: 'econ_p1', name: 'Demand and Supply Analysis: Introduction', sub: 'Prerequisite 1', date: 'Sep 6–7', done: false },
-      { id: 'econ_p2', name: 'Demand and Supply Analysis: Consumer Demand', sub: 'Prerequisite 2', date: 'Sep 8', done: false },
-      { id: 'econ_p3', name: 'Demand and Supply Analysis: The Firm', sub: 'Prerequisite 3', date: 'Sep 9–10', done: false },
-      { id: 'econ_1', name: 'Firms and Market Structures', sub: 'LM1', date: 'Sep 11–12', done: false },
-      { id: 'econ_2', name: 'Understanding Business Cycles', sub: 'LM2', date: 'Sep 13–14', done: false },
-      { id: 'econ_3', name: 'Fiscal Policy', sub: 'LM3', date: 'Sep 15–16', done: false },
-      { id: 'econ_4', name: 'Monetary Policy', sub: 'LM4', date: 'Sep 17', done: false },
-      { id: 'econ_5', name: 'Introduction to Geopolitics', sub: 'LM5', date: 'Sep 18–19', done: false },
-      { id: 'econ_6', name: 'International Trade', sub: 'LM6', date: 'Sep 20–21', done: false },
-      { id: 'econ_7', name: 'Capital Flows and the FX Market', sub: 'LM7', date: 'Sep 22–23', done: false },
-      { id: 'econ_8', name: 'Exchange Rate Calculations', sub: 'LM8', date: 'Sep 24–25', done: false },
+      { id: 'econ_1', name: 'Firms and Market Structures', sub: 'LM1', date: 'Sep 8–9', done: false },
+      { id: 'econ_2', name: 'Understanding Business Cycles', sub: 'LM2', date: 'Sep 10–11', done: false },
+      { id: 'econ_3', name: 'Fiscal Policy', sub: 'LM3', date: 'Sep 12–13', done: false },
+      { id: 'econ_4', name: 'Monetary Policy', sub: 'LM4', date: 'Sep 14–15', done: false },
+      { id: 'econ_5', name: 'Introduction to Geopolitics', sub: 'LM5', date: 'Sep 16–17', done: false },
+      { id: 'econ_6', name: 'International Trade', sub: 'LM6', date: 'Sep 18–19', done: false },
+      { id: 'econ_7', name: 'Capital Flows and the FX Market', sub: 'LM7', date: 'Sep 20–21', done: false },
+      { id: 'econ_8', name: 'Exchange Rate Calculations', sub: 'LM8', date: 'Sep 22–23', done: false },
     ]
   },
   {
@@ -911,14 +880,14 @@ const TOPICS = [
     name: 'Ethics',
     weight: '15–20%',
     priority: 'high',
-    start: 'Sep 26',
+    start: 'Sep 24',
     end: 'Oct 10',
     modules: [
-      { id: 'eth_1', name: 'Ethics and Trust in the Investment Profession', sub: 'LM1', date: 'Sep 26', done: false },
-      { id: 'eth_2', name: 'Code of Ethics and Standards of Professional Conduct', sub: 'LM2', date: 'Sep 27–28', done: false },
-      { id: 'eth_3', name: 'Guidance for Standards I–VII (Part 1)', sub: 'LM3', date: 'Sep 29–Oct 1', done: false },
-      { id: 'eth_4', name: 'Guidance for Standards I–VII (Part 2)', sub: 'LM4', date: 'Oct 2–4', done: false },
-      { id: 'eth_5', name: 'Guidance for Standards I–VII (Part 3)', sub: 'LM5', date: 'Oct 5', done: false },
+      { id: 'eth_1', name: 'Ethics and Trust in the Investment Profession', sub: 'LM1', date: 'Sep 24–25', done: false },
+      { id: 'eth_2', name: 'Code of Ethics and Standards of Professional Conduct', sub: 'LM2', date: 'Sep 26–27', done: false },
+      { id: 'eth_3', name: 'Guidance for Standards I–VII (Part 1)', sub: 'LM3', date: 'Sep 28–30', done: false },
+      { id: 'eth_4', name: 'Guidance for Standards I–VII (Part 2)', sub: 'LM4', date: 'Oct 1–3', done: false },
+      { id: 'eth_5', name: 'Guidance for Standards I–VII (Part 3)', sub: 'LM5', date: 'Oct 4–5', done: false },
       { id: 'eth_6', name: 'Introduction to the Global Investment Performance Standards (GIPS)', sub: 'LM6', date: 'Oct 6–7', done: false },
       { id: 'eth_7', name: 'Ethics Application', sub: 'LM7', date: 'Oct 8–10', done: false },
     ]
@@ -935,16 +904,16 @@ let weekStart = new Date(startDate);
 let weekNum = 1;
 
 const topicRanges = [
-  { name: 'Quantitative Methods', s: new Date('2026-04-17'), e: new Date('2026-05-09') },
-  { name: 'Financial Statement Analysis', s: new Date('2026-05-10'), e: new Date('2026-06-07') },
-  { name: 'Fixed Income', s: new Date('2026-06-08'), e: new Date('2026-07-02') },
-  { name: 'Derivatives', s: new Date('2026-07-03'), e: new Date('2026-07-12') },
-  { name: 'Alternative Investments', s: new Date('2026-07-13'), e: new Date('2026-07-23') },
-  { name: 'Equity Investments', s: new Date('2026-07-24'), e: new Date('2026-08-11') },
-  { name: 'Portfolio Management', s: new Date('2026-08-12'), e: new Date('2026-08-26') },
-  { name: 'Corporate Issuers', s: new Date('2026-08-27'), e: new Date('2026-09-08') },
-  { name: 'Economics', s: new Date('2026-09-09'), e: new Date('2026-09-28') },
-  { name: 'Ethics', s: new Date('2026-09-29'), e: new Date('2026-10-10') },
+  { name: 'Quantitative Methods', s: new Date('2026-04-17'), e: new Date('2026-04-28') },
+  { name: 'Fixed Income', s: new Date('2026-04-29'), e: new Date('2026-05-26') },
+  { name: 'Derivatives', s: new Date('2026-05-27'), e: new Date('2026-06-06') },
+  { name: 'Alternative Investments', s: new Date('2026-06-07'), e: new Date('2026-06-18') },
+  { name: 'Financial Statement Analysis', s: new Date('2026-06-19'), e: new Date('2026-07-16') },
+  { name: 'Equity Investments', s: new Date('2026-07-17'), e: new Date('2026-08-07') },
+  { name: 'Portfolio Management', s: new Date('2026-08-08'), e: new Date('2026-08-24') },
+  { name: 'Corporate Issuers', s: new Date('2026-08-25'), e: new Date('2026-09-07') },
+  { name: 'Economics', s: new Date('2026-09-08'), e: new Date('2026-09-23') },
+  { name: 'Ethics', s: new Date('2026-09-24'), e: new Date('2026-10-10') },
 ];
 
 const reviewStart = new Date('2026-10-11');
@@ -962,7 +931,7 @@ while (weekStart < EXAM_DATE) {
   if (weekEnd > EXAM_DATE) weekEnd.setTime(EXAM_DATE.getTime() - 86400000);
 
   let topic = 'Review';
-  let target = 19;
+  let target = 17;
 
   if (weekStart >= reviewStart) {
     const ri = Math.min(Math.floor((weekStart - reviewStart) / (7 * 86400000)), reviewLabels.length - 1);
@@ -1233,196 +1202,39 @@ document.querySelectorAll('.tab').forEach(tab => {
 
 // SYNC (Export / Import)
 
-// ════════════════════════════════════════════════
-// GIST SYNC
-// ════════════════════════════════════════════════
-
-const GIST_FILENAME = 'cfa_tracker_state.json';
-
-function getSyncConfig() {
-  try {
-    return JSON.parse(localStorage.getItem('cfa_sync_config')) || {};
-  } catch { return {}; }
-}
-
-function saveSyncConfig(config) {
-  localStorage.setItem('cfa_sync_config', JSON.stringify(config));
-}
-
-function showToast(msg, isError) {
+function showToast(msg) {
   const t = document.getElementById("sync-toast");
   t.textContent = msg;
-  t.style.background = isError ? 'var(--red)' : 'var(--green)';
   t.classList.add("show");
-  setTimeout(() => t.classList.remove("show"), 3000);
+  setTimeout(() => t.classList.remove("show"), 2500);
 }
 
-function toggleSyncSettings() {
-  const el = document.getElementById('sync-settings');
-  const isHidden = el.style.display === 'none';
-  el.style.display = isHidden ? 'block' : 'none';
-  if (isHidden) {
-    const config = getSyncConfig();
-    document.getElementById('gist-token').value = config.token || '';
-    document.getElementById('gist-id').value = config.gistId || '';
-    document.getElementById('auto-sync-toggle').checked = config.autoSync || false;
-    updateSyncStatus();
-  }
+function exportState() {
+  const data = localStorage.getItem("cfa_tracker_state") || "{}";
+  const encoded = btoa(data);
+  navigator.clipboard.writeText(encoded).then(() => {
+    showToast("Progress copied to clipboard");
+  }).catch(() => {
+    prompt("Copy this code and paste it on your other device:", encoded);
+  });
 }
 
-function saveSyncSettings() {
-  const token = document.getElementById('gist-token').value.trim();
-  const gistId = document.getElementById('gist-id').value.trim();
-  const autoSync = document.getElementById('auto-sync-toggle').checked;
-  
-  if (!token || !gistId) {
-    showToast('Please enter both token and Gist ID', true);
-    return;
-  }
-  
-  saveSyncConfig({ token, gistId, autoSync });
-  showToast('Sync settings saved!');
-  updateSyncStatus();
-}
-
-function updateSyncStatus() {
-  const config = getSyncConfig();
-  const el = document.getElementById('sync-status');
-  if (config.token && config.gistId) {
-    const lastSync = config.lastSync ? new Date(config.lastSync).toLocaleString() : 'Never';
-    el.innerHTML = '✅ Connected · Last sync: ' + lastSync;
-  } else {
-    el.innerHTML = '⚠️ Not configured';
-  }
-}
-
-async function syncToGist() {
-  const config = getSyncConfig();
-  if (!config.token || !config.gistId) {
-    showToast('Set up sync settings first (⚙️)', true);
-    toggleSyncSettings();
-    return;
-  }
-  
-  const data = localStorage.getItem('cfa_tracker_state') || '{}';
-  
+function importState() {
+  const encoded = prompt("Paste your progress code from the other device:");
+  if (!encoded || !encoded.trim()) return;
   try {
-    const res = await fetch('https://api.github.com/gists/' + config.gistId, {
-      method: 'PATCH',
-      headers: {
-        'Authorization': 'token ' + config.token,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        files: {
-          [GIST_FILENAME]: { content: data }
-        }
-      })
-    });
-    
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.message || res.statusText);
-    }
-    
-    config.lastSync = new Date().toISOString();
-    saveSyncConfig(config);
-    showToast('☁️ Progress saved to cloud!');
-    updateSyncStatus();
-  } catch (e) {
-    showToast('Sync failed: ' + e.message, true);
-  }
-}
-
-async function syncFromGist() {
-  const config = getSyncConfig();
-  if (!config.token || !config.gistId) {
-    showToast('Set up sync settings first (⚙️)', true);
-    toggleSyncSettings();
-    return;
-  }
-  
-  try {
-    const res = await fetch('https://api.github.com/gists/' + config.gistId, {
-      headers: {
-        'Authorization': 'token ' + config.token,
-      }
-    });
-    
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.message || res.statusText);
-    }
-    
-    const gist = await res.json();
-    const content = gist.files[GIST_FILENAME]?.content;
-    
-    if (!content) {
-      showToast('No saved progress found in Gist', true);
-      return;
-    }
-    
-    const parsed = JSON.parse(content);
-    localStorage.setItem('cfa_tracker_state', JSON.stringify(parsed));
+    const data = atob(encoded.trim());
+    const parsed = JSON.parse(data);
+    localStorage.setItem("cfa_tracker_state", JSON.stringify(parsed));
     state = parsed;
     renderTopics();
     renderWeekly();
     updateStats();
-    
-    config.lastSync = new Date().toISOString();
-    saveSyncConfig(config);
-    showToast('☁️ Progress loaded from cloud!');
-    updateSyncStatus();
+    showToast("Progress imported successfully");
   } catch (e) {
-    showToast('Load failed: ' + e.message, true);
+    alert("Invalid code. Make sure you copied the full text from Export.");
   }
 }
-
-// Auto-sync: save to gist whenever state changes
-const originalSaveState = saveState;
-saveState = function(s) {
-  originalSaveState(s);
-  const config = getSyncConfig();
-  if (config.autoSync && config.token && config.gistId) {
-    // Debounce: wait 2 seconds after last change before syncing
-    clearTimeout(window._autoSyncTimer);
-    window._autoSyncTimer = setTimeout(() => {
-      syncToGist().catch(() => {}); // silent auto-sync
-    }, 2000);
-  }
-};
-
-// Auto-load from gist on page load if configured
-(async function autoLoadOnStart() {
-  const config = getSyncConfig();
-  if (config.token && config.gistId) {
-    try {
-      const res = await fetch('https://api.github.com/gists/' + config.gistId, {
-        headers: { 'Authorization': 'token ' + config.token }
-      });
-      if (res.ok) {
-        const gist = await res.json();
-        const content = gist.files[GIST_FILENAME]?.content;
-        if (content && content !== '{}') {
-          const remote = JSON.parse(content);
-          const local = loadState();
-          
-          // Merge: use whichever has more modules done (simple conflict resolution)
-          const remoteCount = Object.values(remote.modules || {}).filter(Boolean).length;
-          const localCount = Object.values(local.modules || {}).filter(Boolean).length;
-          
-          if (remoteCount > localCount) {
-            localStorage.setItem('cfa_tracker_state', content);
-            state = remote;
-            renderTopics();
-            renderWeekly();
-            updateStats();
-          }
-        }
-      }
-    } catch (e) { /* silent fail on auto-load */ }
-  }
-})();
 
 // RESET
 // ════════════════════════════════════════════════
